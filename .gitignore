@@ -1,0 +1,17 @@
+venv/bin/pip
+venv/bin/pip3
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+venv/
+.env/
+venv/bin/
+# PyTest cache
+.pytest_cache/
+
+# IDE/editor stuff
+.vscode/
+.idea/
