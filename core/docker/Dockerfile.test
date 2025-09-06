@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+# install system deps and chrome
+RUN apt-get update && apt-get install -y wget unzip gnupg ca-certificates fonts-liberation libnss3 libx11-xcb1 libxcomposite1 libxrandr2 libasound2 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 xvfb \
+  && rm -rf /var/lib/apt/lists/*
+
+# install chrome
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+ && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+ && apt-get update && apt-get install -y google-chrome-stable
+
+WORKDIR /workspace
+COPY requirements.txt /workspace/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# install Allure CLI
+ENV ALLURE_VER=2.23.4
+RUN wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VER}/allure-${ALLURE_VER}.tgz -O /tmp/allure.tgz \
+ && tar -xzf /tmp/allure.tgz -C /opt/ \
+ && ln -s /opt/allure-${ALLURE_VER}/bin/allure /usr/local/bin/allure
+
+COPY . /workspace
+
+# Example entrypoint for running tests
+ENTRYPOINT ["bash", "-lc", "pytest -n auto --alluredir=allure-results || true; allure generate allure-results --clean -o allure-report || true; ls -la allure-report"]

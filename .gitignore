@@ -15,3 +15,4 @@ venv/bin/
 # IDE/editor stuff
 .vscode/
 .idea/
+main.py

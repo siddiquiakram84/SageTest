@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "suite_name": "saucedemo_smoke",
+  "description": "Smoke suite for saucedemo flows.",
+  "env": {
+    "name": "local",
+    "base_url": "https://www.saucedemo.com",
+    "browser": "chrome",
+    "headless": true,
+    "chrome_path": ""
+  },
+  "execution": {
+    "parallel": true,
+    "workers": "auto",
+    "retry": {
+      "enabled": true,
+      "times": 1
+    }
+  },
+  "filters": {
+    "tags_include": ["smoke"],
+    "tags_exclude": []
+  },
+  "groups": [
+    {
+      "name": "login",
+      "description": "Login related tests",
+      "tests": [
+        {
+          "id": "aut/tests/test_login.py::test_login_happy_path",
+          "run": true,
+          "priority": "P0",
+          "owner": "qa_team_a",
+          "tags": ["smoke", "auth"],
+          "data": {
+            "username": "standard_user",
+            "password": "secret_sauce"
+          },
+          "annotations": {
+            "expected_duration_secs": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "inventory",
+      "tests": [
+        {
+          "id": "aut/tests/test_inventory.py::test_inventory_flow",
+          "run": false,
+          "priority": "P1",
+          "tags": ["regression"]
+        }
+      ]
+    }
+  ],
+  "artifacts": {
+    "test_report_dir": "aut/test_report",
+    "suite_report_dir": "aut/suite_report",
+    "result_dir": "aut/report_result"
+  },
+  "hooks": {
+    "pre_run": [],
+    "post_run": []
+  }
+}
