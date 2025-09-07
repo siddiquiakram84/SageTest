@@ -1,7 +1,7 @@
-# SageTest1/conftest.py
+# conftest.py
 """
-Updated conftest.py that writes artifacts to aut/test_report/<TS>/ (no nested allure-results),
-attaches screenshot, page source, healing log and network dump to Allure, and writes run_metadata.json.
+Conftest for SageTest. Assumes this file lives in SageTest1/aut/.
+Writes artifacts into aut/test_report/<TS>/ and uses core.* modules when available.
 """
 import os
 import json
@@ -33,13 +33,15 @@ except Exception:
     def find_with_healing(driver, by, locator, **kwargs):
         return driver.find_element(by, locator)
 
-# project directories
+# IMPORTANT PATHS: conftest.py lives inside aut/, so:
 THIS_FILE = Path(__file__).resolve()
-PROJECT_ROOT = THIS_FILE.parent
-AUT_ROOT = PROJECT_ROOT / "aut"
-
+AUT_ROOT = THIS_FILE.parent              # <project>/aut
+PROJECT_ROOT = AUT_ROOT.parent           # <project>
+# Timestamp exported by runner (runner.py sets SAGETEST_TS)
 TS = os.getenv("SAGETEST_TS", time.strftime("%Y%m%d_%H%M%S"))
-TEST_REPORT_DIR = AUT_ROOT / "test_report" / TS  # single run folder
+
+# Single-run artifact directories under aut/
+TEST_REPORT_DIR = AUT_ROOT / "test_report" / TS
 SCREENSHOT_DIR = TEST_REPORT_DIR / "screenshots"
 NETWORK_DIR = TEST_REPORT_DIR / "network"
 LOG_DIR = AUT_ROOT / "logs" / TS
@@ -53,7 +55,6 @@ def save_json(path: Path, data: Dict[str, Any]):
     with path.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, default=str)
 
-# TestConfig dataclass similar to core.driver_factory.TestConfig
 @dataclass(frozen=True)
 class TestConfig:
     base_url: str
@@ -95,7 +96,7 @@ def configure_logging():
     logger.info(f"Logging initialized: {log_path}")
     return logger
 
-# Try to copy top-level metadata into run folder for traceability
+# copy top-level metadata into run folder for traceability
 def _copy_run_metadata():
     if METADATA_FILE.exists():
         try:
@@ -141,7 +142,6 @@ def test_config(pytestconfig) -> TestConfig:
 def logger():
     return configure_logging()
 
-# driver fixture (function-scoped)
 @pytest.fixture(scope="function")
 def driver(test_config: TestConfig, logger: logging.Logger) -> Generator:
     # prefer core.driver_factory.create_driver
@@ -160,7 +160,7 @@ def driver(test_config: TestConfig, logger: logging.Logger) -> Generator:
             drv = None
 
     if drv is None:
-        # minimal fallback factories (chrome only)
+        # minimal fallback factories (chrome)
         from selenium import webdriver
         from selenium.webdriver.chrome.service import Service as ChromeService
         from webdriver_manager.chrome import ChromeDriverManager
@@ -188,7 +188,6 @@ def driver(test_config: TestConfig, logger: logging.Logger) -> Generator:
     # attach dump_network helper if missing
     if not hasattr(drv, "dump_network"):
         def dump_network(to_path: Path):
-            # best-effort: if selenium-wire driver available it has requests collection; else return None
             try:
                 items = []
                 for r in getattr(drv, "requests", []):
@@ -216,7 +215,6 @@ def driver(test_config: TestConfig, logger: logging.Logger) -> Generator:
     except Exception:
         logger.exception("Error quitting driver")
 
-# per-test metadata fixture
 @pytest.fixture(scope="function", autouse=True)
 def test_metadata(request, tmp_path, logger):
     meta = {"nodeid": request.node.nodeid, "start_time": time.time(), "attachments": []}
