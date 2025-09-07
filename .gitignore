@@ -16,3 +16,10 @@ venv/bin/
 .vscode/
 .idea/
 main.py
+report_result/
+suite_report/
+logs/
+__pycache__/
+.pytest_cache/
+*.log
+test_report/

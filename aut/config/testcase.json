@@ -6,7 +6,7 @@
     "name": "local",
     "base_url": "https://www.saucedemo.com",
     "browser": "chrome",
-    "headless": true,
+    "headless": false,
     "chrome_path": ""
   },
   "execution": {

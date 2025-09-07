@@ -1,0 +1,60 @@
+🔹 Basic Execution
+python aut/runner.py
+
+
+Runs all tests marked with "run": true in aut/config/testcase.json.
+
+🔹 Run Tests by Tags
+python aut/runner.py --tags smoke
+
+
+Runs only tests that have the smoke tag.
+
+Multiple tags → OR logic (any test matching at least one tag):
+
+python aut/runner.py --tags smoke,login
+
+🔹 Override Environment
+python aut/runner.py --env staging
+
+
+Overrides the environment defined in config/testcase.json with "name": "staging".
+
+Useful for switching between dev, staging, prod.
+
+🔹 Control Parallelism
+python aut/runner.py --workers auto
+
+
+Runs tests in parallel using all available CPU cores (requires pytest-xdist).
+
+python aut/runner.py --workers 4
+
+
+Runs tests in exactly 4 parallel workers.
+
+🔹 Dry Run (No Execution)
+python aut/runner.py --dry-run
+
+
+Only validates config, selects tests, and writes a manifest file.
+
+Does not run pytest.
+
+Good for checking which tests will run without executing them.
+
+🔹 Keep Cache Files
+python aut/runner.py --keep-cache
+
+
+Keeps __pycache__ and .pytest_cache (redirected under system temp).
+
+Use when debugging pytest caching issues.
+
+By default, caches are cleaned up after each run.
+
+🔹 Combine Options
+python aut/runner.py --tags smoke --env staging --workers 4
+
+
+Runs only smoke tests on the staging environment, using 4 workers.

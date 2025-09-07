@@ -1,0 +1,34 @@
+{
+  "suite": "saucedemo_smoke",
+  "software_version": "1.4.2",
+  "build_number": "2025.09.07.2018",
+  "git_commit": "a1b2c3d4",
+  "author": "QA Automation Team",
+  "owner": "qa-leads@example.com",
+  "test_environment": {
+    "os": "Ubuntu 22.04",
+    "browser_matrix": ["chrome:116","firefox:115"],
+    "service_endpoints": {
+      "api_base": "https://api.example.com",
+      "auth_service": "https://auth.example.com"
+    }
+  },
+  "execution_notes": "Nightly smoke run — focus on critical flows",
+  "components": [
+    {"name": "login", "owner": "team-login"},
+    {"name": "checkout", "owner": "team-checkout"}
+  ],
+  "regression_scope": "smoke",
+  "metrics": {
+    "expected_max_duration_secs": 900,
+    "expected_failure_rate_pct": 2.0
+  },
+  "contact": {
+    "primary": "qa-leads@example.com",
+    "slack": "#qa-alerts"
+  },
+  "extra": {
+    "policy": "Internal - Confidential",
+    "notes": "Add release notes if available"
+  }
+}
