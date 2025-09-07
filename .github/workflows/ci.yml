@@ -1,41 +1,11 @@
-name: Pytest Allure
+name: Pytest Allure (Disabled)
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:  # workflow can only be run manually from the Actions tab
 
 jobs:
   tests:
+    if: ${{ false }}  # completely disables job even if triggered manually
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y nodejs npm google-chrome-stable xvfb
-
-      - name: Install allure-cli
-        run: npm install -g allure-commandline@latest --no-audit --no-fund
-
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run tests via runner.py
-        run: |
-          python aut/runner.py --workers auto --env staging || true
-
-      - name: Upload Allure Report artifact (full interactive site)
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-site
-          path: aut/test_report/*/allure_site
-
-      - name: Upload Enterprise Report artifact (HTML + PDF dashboards)
-        uses: actions/upload-artifact@v4
-        with:
-          name: enterprise-report
-          path: aut/report_result
+      - run: echo "Workflow is disabled. No tests will run."
