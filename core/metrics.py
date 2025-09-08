@@ -2,13 +2,6 @@
 """
 Simple metrics helpers: Timer and a metrics container.
 
-Usage:
-    from core.metrics import Timer, Metrics
-    t = Timer()
-    t.start()
-    ...do work...
-    t.stop()
-    print(t.elapsed)
 """
 import time
 from typing import Dict, Any
